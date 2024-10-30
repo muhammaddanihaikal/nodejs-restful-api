@@ -1,0 +1,39 @@
+{
+  "name": "restful-api-1",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest -i",
+    "dev": "nodemon ./src/main.js"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/jest": "^29.5.14",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.1",
+    "jest": "^29.7.0",
+    "joi": "^17.13.3",
+    "nodemon": "^3.1.7",
+    "uuid": "^11.0.2",
+    "winston": "^3.15.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^10.0.0",
+    "babel-jest": "^29.7.0",
+    "prisma": "^5.21.1",
+    "supertest": "^7.0.0"
+  }
+}
