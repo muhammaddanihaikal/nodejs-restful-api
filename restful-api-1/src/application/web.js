@@ -5,5 +5,6 @@ import { errorMiddleware } from "../middleware/error-middleware.js";
 export const web = express();
 
 // middleware
-web.use(web.json());
+web.use(express.json());
 web.use(publicRouter);
+web.use(errorMiddleware);
