@@ -29,12 +29,39 @@ describe("POST /api/users", () => {
   });
 
   // MASIH ERROR!!!
-  it("harus bisa menolak jika request tidak valid", async () => {
+  it("harus bisa reject ketika request tidak valid", async () => {
     const result = await supertest(web).post("/api/users").send({
       username: "",
       password: "",
       name: "",
     });
+
+    expect(result.status).toBe(400);
+    expect(result.body.errors).toBeDefined();
+  });
+
+  // MASIH ERROR!!!
+  it("harus bisa reject ketika username sudah ada ", async () => {
+    let result = await supertest(web).post("/api/users").send({
+      username: "danihaikal91",
+      password: "rahasia",
+      name: "Muhammad Dani Haikal",
+    });
+
+    logger.info(result.body);
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.username).toBe("danihaikal91");
+    expect(result.body.data.name).toBe("Muhammad Dani Haikal");
+    expect(result.body.data.password).toBeUndefined();
+
+    result = await supertest(web).post("/api/users").send({
+      username: "danihaikal91",
+      password: "rahasia",
+      name: "Muhammad Dani Haikal",
+    });
+
+    logger.info(result.body);
 
     expect(result.status).toBe(400);
     expect(result.body.errors).toBeDefined();
