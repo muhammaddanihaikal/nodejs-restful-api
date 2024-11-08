@@ -8,7 +8,7 @@ const errorMiddleware = (error, req, res, next) => {
 
   if (error instanceof ResponseError) {
     res
-      .status(error.satatus)
+      .status(error.status)
       .json({
         errors: error.message,
       })
