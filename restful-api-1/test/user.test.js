@@ -1,7 +1,8 @@
 import supertest from "supertest";
 import { web } from "../src/application/web.js";
 import { logger } from "../src/application/logging.js";
-import { removeTestUser, createTestUser } from "./test-util.js";
+import { removeTestUser, createTestUser, getTestUser } from "./test-util.js";
+import bcrypt from "bcrypt";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
@@ -149,5 +150,52 @@ describe("GET /api/users/current", () => {
 
     expect(result.status).toBe(401);
     expect(result.body.errors).toBeDefined();
+  });
+});
+
+describe("PATCH /api/users/current", () => {
+  beforeEach(async () => {
+    await createTestUser();
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+  });
+
+  it("harus bisa update user", async () => {
+    const result = await supertest(web)
+      .patch("/api/users/current")
+      .set("Authorization", "test")
+      .send({
+        password: "test2",
+        name: "test2",
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.name).toBe("test2");
+
+    const user = await getTestUser();
+    expect(await bcrypt.compare("test2", user.password)).toBe(true);
+  });
+
+  it("harus bisa update user name", async () => {
+    const result = await supertest(web)
+      .patch("/api/users/current")
+      .set("Authorization", "test")
+      .send({
+        name: "test2",
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.name).toBe("test2");
+  });
+
+  it("harus bisa reject ketika data tidak valid", async () => {
+    const result = await supertest(web)
+      .patch("/api/users/current")
+      .set("Authorization", "salah")
+      .send({});
+
+    expect(result.status).toBe(401);
   });
 });
