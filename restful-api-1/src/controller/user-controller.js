@@ -40,7 +40,7 @@ const update = async (req, res, next) => {
   try {
     const username = req.user.username;
     const request = req.body;
-    request.username = username;
+    request.username = username; // untuk validasi
 
     const result = await userService.update(request);
 
@@ -52,4 +52,18 @@ const update = async (req, res, next) => {
   }
 };
 
-export default { register, login, get, update };
+const logout = async (req, res, next) => {
+  try {
+    const username = req.user.username;
+
+    await userService.logout(username);
+
+    res.status(200).json({
+      data: "OK",
+    });
+  } catch (error) {
+    next(e);
+  }
+};
+
+export default { register, login, get, update, logout };

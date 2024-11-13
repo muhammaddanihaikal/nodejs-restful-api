@@ -25,7 +25,6 @@ describe("POST /api/users", () => {
     expect(result.body.data.password).toBeUndefined();
   });
 
-  // MASIH ERROR!!!
   it("harus bisa reject ketika request tidak valid", async () => {
     const result = await supertest(web).post("/api/users").send({
       username: "",
