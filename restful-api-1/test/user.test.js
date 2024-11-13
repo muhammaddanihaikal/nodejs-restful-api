@@ -36,7 +36,6 @@ describe("POST /api/users", () => {
     expect(result.body.errors).toBeDefined();
   });
 
-  // MASIH ERROR!!!
   it("harus bisa reject ketika username sudah ada ", async () => {
     let result = await supertest(web).post("/api/users").send({
       username: "test",
@@ -196,5 +195,36 @@ describe("PATCH /api/users/current", () => {
       .send({});
 
     expect(result.status).toBe(401);
+  });
+});
+
+describe("DELETE /api/users/logout", () => {
+  beforeEach(async () => {
+    await createTestUser();
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+  });
+
+  it("harus bisa logout", async () => {
+    const result = await supertest(web)
+      .delete("/api/users/logout")
+      .set("Authorization", "test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data).toBe("OK");
+
+    const user = await getTestUser();
+    expect(user.token).toBeNull();
+  });
+
+  it("harus bisa reject ketika token tidak valid", async () => {
+    const result = await supertest(web)
+      .delete("/api/users/logout")
+      .set("Authorization", "salah");
+
+    expect(result.status).toBe(401);
+    expect(result.body.errors).toBeDefined();
   });
 });
