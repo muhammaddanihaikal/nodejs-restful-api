@@ -95,7 +95,7 @@ const get = async (username) => {
   });
 
   if (!user) {
-    throw new ResponseError(404, "User not found");
+    throw new ResponseError(404, "user not found");
   }
 
   return user;
@@ -111,7 +111,7 @@ const update = async (request) => {
   });
 
   if (!userExist) {
-    throw new ResponseError(404, "User not found");
+    throw new ResponseError(404, "user not found");
   }
 
   const data = {};
@@ -146,7 +146,7 @@ const logout = async (username) => {
   });
 
   if (!user) {
-    throw new ResponseError(404, "User not found");
+    throw new ResponseError(404, "user not found");
   }
 
   return prismaClient.user.update({

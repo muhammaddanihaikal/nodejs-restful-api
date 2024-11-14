@@ -1,6 +1,8 @@
 import supertest from "supertest";
 import {
+  createTestContact,
   createTestUser,
+  getTestContact,
   removeTestContact,
   removeTestUser,
 } from "./test-util.js";
@@ -57,6 +59,50 @@ describe("POST /api/contacts", () => {
       });
 
     expect(result.status).toBe(400);
+    expect(result.body.errors).toBeDefined();
+  });
+});
+
+describe("GET /api/contacts/:contactId", () => {
+  beforeEach(async () => {
+    await createTestUser();
+    await createTestContact();
+  });
+
+  afterEach(async () => {
+    await removeTestContact();
+    await removeTestUser();
+  });
+
+  it("harus bisa get contact berdasarkan id", async () => {
+    const contact = await getTestContact();
+
+    const result = await supertest(web)
+      .get("/api/contacts/" + contact.id)
+      .set("Authorization", "test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.id).toBeDefined();
+  });
+
+  it("harus bisa reject ketika id tidak valid", async () => {
+    const result = await supertest(web)
+      .get("/api/contacts/123")
+      .set("Authorization", "test");
+
+    expect(result.status).toBe(404);
+    expect(result.body.errors).toBeDefined();
+    expect(result.body.errors).toBe("contact not found");
+  });
+
+  it("harus bisa reject ketika token tidak valid", async () => {
+    const contact = await getTestContact();
+
+    const result = await supertest(web)
+      .get("/api/contacts/" + contact.id)
+      .set("Authorization", "salah");
+
+    expect(result.status).toBe(401);
     expect(result.body.errors).toBeDefined();
   });
 });
