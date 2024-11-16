@@ -201,7 +201,7 @@ describe("DELETE /api/contacts/:contactId", () => {
   });
 
   it("harus bisa menghapus data contact", async () => {
-    const contact = await getTestContact();
+    let contact = await getTestContact();
 
     const result = await supertest(web)
       .delete("/api/contacts/" + contact.id)
@@ -209,6 +209,10 @@ describe("DELETE /api/contacts/:contactId", () => {
 
     expect(result.status).toBe(200);
     expect(result.body.data).toBe("OK");
+
+    // cek di db
+    contact = await getTestContact();
+    expect(contact).toBeNull();
   });
 
   it("harus bisa reject ketika contact id tidak ada", async () => {
