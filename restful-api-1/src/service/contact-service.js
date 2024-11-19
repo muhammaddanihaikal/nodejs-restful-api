@@ -3,6 +3,7 @@ import { ResponseError } from "../error/response-error.js";
 import {
   createContactValidation,
   getContactValidation,
+  searchContactValidation,
   updateContactValidation,
 } from "../validation/contact-validation.js";
 import { validate } from "../validation/validation.js";
@@ -101,4 +102,68 @@ const remove = async (contactId) => {
   });
 };
 
-export default { create, get, update, remove };
+const search = async (username, request) => {
+  request = validate(searchContactValidation, request);
+
+  // 1 ((page - 1) * size) = 0
+  // 2 ((page - 1) * size) = 10
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  filters.push({
+    username,
+  });
+
+  if (request.name) {
+    filters.push({
+      OR: [
+        {
+          firstName: {
+            contains: request.name,
+          },
+          lastName: {
+            contains: request.name,
+          },
+        },
+      ],
+    });
+  }
+
+  if (request.email) {
+    filters.push({
+      email: {
+        contains: request.email,
+      },
+    });
+  }
+
+  if (request.phone) {
+    filters.push({
+      phone: {
+        contains: request.phone,
+      },
+    });
+  }
+
+  const contacts = await prismaClient.contact.findMany({
+    where: {
+      AND: filters,
+    },
+    take: request.size,
+    skip,
+  });
+
+  const totalItem = contacts && contacts.length();
+
+  return {
+    data: contacts,
+    paging: {
+      page: request.page,
+      totalItem,
+      totalPage: Math.floor(totalItem / request.size),
+    },
+  };
+};
+
+export default { create, get, update, remove, search };
