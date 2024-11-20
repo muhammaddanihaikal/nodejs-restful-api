@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import {
+  createManyTestContact,
   createTestContact,
   createTestUser,
   getTestContact,
@@ -233,5 +234,95 @@ describe("DELETE /api/contacts/:contactId", () => {
 
     expect(result.status).toBe(401);
     expect(result.body.errors).toBeDefined();
+  });
+});
+
+describe("GET /api/contacts", () => {
+  beforeEach(async () => {
+    await createTestUser();
+    await createManyTestContact();
+  });
+
+  afterEach(async () => {
+    await removeTestContact();
+    await removeTestUser();
+  });
+
+  it("harus bisa search", async () => {
+    const result = await supertest(web)
+      .get("/api/contacts")
+      .set("Authorization", "test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.length).toBe(10);
+    expect(result.body.paging.page).toBe(1);
+    expect(result.body.paging.totalItem).toBe(15);
+    expect(result.body.paging.totalPage).toBe(2);
+  });
+
+  it("harus bisa search dengan page 2", async () => {
+    const result = await supertest(web)
+      .get("/api/contacts")
+      .query({
+        page: 2,
+      })
+      .set("Authorization", "test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.length).toBe(5);
+    expect(result.body.paging.page).toBe(2);
+    expect(result.body.paging.totalItem).toBe(15);
+    expect(result.body.paging.totalPage).toBe(2);
+  });
+
+  it("harus bisa search dengan name", async () => {
+    const result = await supertest(web)
+      .get("/api/contacts")
+      .query({
+        name: "test 1",
+      })
+      .set("Authorization", "test");
+
+    console.log(result);
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.length).toBe(7);
+    expect(result.body.paging.page).toBe(1);
+    expect(result.body.paging.totalItem).toBe(7);
+    expect(result.body.paging.totalPage).toBe(1);
+  });
+
+  it("harus bisa search dengan email", async () => {
+    const result = await supertest(web)
+      .get("/api/contacts")
+      .query({
+        email: "test1",
+      })
+      .set("Authorization", "test");
+
+    console.log(result);
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.length).toBe(7);
+    expect(result.body.paging.page).toBe(1);
+    expect(result.body.paging.totalItem).toBe(7);
+    expect(result.body.paging.totalPage).toBe(1);
+  });
+
+  it("harus bisa search dengan phone", async () => {
+    const result = await supertest(web)
+      .get("/api/contacts")
+      .query({
+        phone: "089999999991",
+      })
+      .set("Authorization", "test");
+
+    console.log(result);
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.length).toBe(7);
+    expect(result.body.paging.page).toBe(1);
+    expect(result.body.paging.totalItem).toBe(7);
+    expect(result.body.paging.totalPage).toBe(1);
   });
 });

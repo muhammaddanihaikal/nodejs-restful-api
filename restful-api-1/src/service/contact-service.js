@@ -154,14 +154,18 @@ const search = async (username, request) => {
     skip,
   });
 
-  const totalItem = contacts && contacts.length();
+  const totalItem = await prismaClient.contact.count({
+    where: {
+      AND: filters,
+    },
+  });
 
   return {
     data: contacts,
     paging: {
       page: request.page,
       totalItem,
-      totalPage: Math.floor(totalItem / request.size),
+      totalPage: Math.ceil(totalItem / request.size), // bulatkan ke atas
     },
   };
 };

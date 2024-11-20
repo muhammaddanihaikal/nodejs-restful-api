@@ -65,11 +65,11 @@ const search = async (req, res, next) => {
   try {
     const username = req.user.username;
     const request = {
-      page: req.params.page,
-      size: req.params.size,
-      name: req.params.name,
-      email: req.params.email,
-      phone: req.params.phone,
+      page: req.query.page,
+      size: req.query.size,
+      name: req.query.name,
+      email: req.query.email,
+      phone: req.query.phone,
     };
 
     const result = await contactService.search(username, request);
