@@ -122,6 +122,8 @@ const search = async (username, request) => {
           firstName: {
             contains: request.name,
           },
+        },
+        {
           lastName: {
             contains: request.name,
           },
@@ -165,7 +167,7 @@ const search = async (username, request) => {
     paging: {
       page: request.page,
       totalItem,
-      totalPage: Math.ceil(totalItem / request.size), // bulatkan ke atas
+      totalPage: Math.ceil(totalItem / 10), // bulatkan ke atas
     },
   };
 };
